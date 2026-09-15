@@ -11,7 +11,9 @@ class Lead(Base):
     phone = Column(String, index=True)
     status = Column(String, default="novo")
     notes = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)  
+    created_at = Column(DateTime, default=datetime.utcnow) 
+    ai_score = Column(Integer, nullable=True)
+    ai_summary = Column(String, nullable=True) 
 
 class User(Base):
     __tablename__ = "users"

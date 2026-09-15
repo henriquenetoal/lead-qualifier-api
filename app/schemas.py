@@ -16,6 +16,8 @@ class LeadResponse(BaseModel):
     phone: Optional[str] = None
     status: str
     notes: Optional[str] = None
+    ai_score: Optional[int] = None
+    ai_summary: Optional[str] = None
     created_at: datetime
 
     class Config:

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from . import models, schemas, auth
+from . import models, schemas, auth, ai
 from .database import engine, get_db
 
 
@@ -48,3 +48,20 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     token = auth.create_access_token({"sub": user.username})
     return {"access_token": token, "token_type": "bearer"}
+
+@app.post("/leads/{lead_id}/qualify", response_model=schemas.LeadResponse)
+def qualify_lead(lead_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    lead = db.query(models.Lead).filter(models.Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    
+    if not lead.notes:
+        raise HTTPException(status_code=400, detail="Lead has no notes to analyze")
+    
+    ai_result = ai.qualify_lead(lead.notes)
+    lead.ai_score = ai_result.get("score")
+    lead.ai_summary = ai_result.get("summary")
+    
+    db.commit()
+    db.refresh(lead)
+    return lead
