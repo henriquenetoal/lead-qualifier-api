@@ -11,4 +11,11 @@ class Lead(Base):
     phone = Column(String, index=True)
     status = Column(String, default="novo")
     notes = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)     
+    created_at = Column(DateTime, default=datetime.utcnow)  
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String)   
