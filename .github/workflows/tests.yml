@@ -6,6 +6,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -20,7 +35,7 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: "postgresql://user:pass@localhost/testdb"
+          DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
           SECRET_KEY: "chave-de-teste-para-ci"
           GEMINI_API_KEY: "chave-fake-para-ci"
         run: pytest
