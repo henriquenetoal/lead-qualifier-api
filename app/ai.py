@@ -19,5 +19,8 @@ Responda só com o JSON, nada de texto antes ou depois, nesse formato: {{"score"
 
     response = model.generate_content(prompt)
     raw_text = response.text.strip()
-    data = json.loads(raw_text)
+    try:
+        data = json.loads(raw_text)
+    except json.JSONDecodeError:
+        raise ValueError("AI returned an invalid response format")
     return data

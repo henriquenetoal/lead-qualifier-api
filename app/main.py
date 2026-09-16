@@ -65,10 +65,13 @@ def qualify_lead(lead_id: int, db: Session = Depends(get_db), current_user: mode
     if not lead.notes:
         raise HTTPException(status_code=400, detail="Lead has no notes to analyze")
     
-    ai_result = ai.qualify_lead(lead.notes)
-    lead.ai_score = ai_result.get("score")
-    lead.ai_summary = ai_result.get("summary")
-    
+    try:
+        result = ai.qualify_lead(lead.notes)
+        lead.ai_score = result.get("score")
+        lead.ai_summary = result.get("summary")
+    except ValueError as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
     db.commit()
     db.refresh(lead)
     return lead
