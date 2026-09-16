@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Qualifier</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #eceee7;
+    --paper: #ffffff;
+    --ink: #1f2b22;
+    --ink-soft: #58635b;
+    --line: #d7d9cf;
+    --accent: #a6743d;
+    --accent-soft: #f1e6d6;
+    --sage: #4c7a5e;
+    --sage-soft: #e3ece5;
+    --brick: #9b4a3a;
+    --brick-soft: #f3e2dd;
+    --focus: #2f5f8a;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  h1,h2,h3{
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  button{ font-family: inherit; }
+
+  a{ color: var(--focus); }
+
+  :focus-visible{
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* ---------- layout shells ---------- */
+
+  .center-screen{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .app-shell{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+
+  /* ---------- auth card ---------- */
+
+  .auth-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    width: 100%;
+    max-width: 380px;
+    padding: 40px 36px;
+  }
+
+  .wordmark{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .wordmark .mark{
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    display: inline-block;
+    transform: rotate(45deg);
+  }
+
+  .wordmark h1{ font-size: 24px; }
+
+  .auth-card p.subtitle{
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin: 0 0 28px;
+  }
+
+  .field{ margin-bottom: 16px; }
+
+  .field label{
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .field input{
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 15px;
+    color: var(--ink);
+    font-family: inherit;
+  }
+
+  .field input:focus{
+    background: var(--paper);
+    border-color: var(--focus);
+  }
+
+  .btn{
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+  }
+
+  .btn:hover{ background: #384a3c; }
+
+  .btn.full{ width: 100%; }
+
+  .btn.ghost{
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn.ghost:hover{ background: var(--accent-soft); }
+
+  .btn.small{
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .btn:disabled{
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .switch-mode{
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .switch-mode button{
+    background: none;
+    border: none;
+    color: var(--focus);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+    text-decoration: underline;
+  }
+
+  .error-msg{
+    background: var(--brick-soft);
+    color: var(--brick);
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--brick);
+  }
+
+  /* ---------- dashboard header ---------- */
+
+  .top-bar{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .top-bar h1{ font-size: 28px; }
+
+  .top-bar .who{
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .who button{
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+  }
+
+  /* ---------- stats ---------- */
+
+  .stats{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 32px;
+  }
+
+  .stat{
+    background: var(--paper);
+    padding: 16px 18px;
+  }
+
+  .stat .num{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .stat .label{
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 640px){
+    .stats{ grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- new lead form ---------- */
+
+  .panel{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 20px 22px;
+    margin-bottom: 28px;
+  }
+
+  .panel-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .panel-head h2{ font-size: 17px; }
+
+  .panel-body{
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+  }
+
+  .panel-body .full-row{ grid-column: 1 / -1; }
+
+  @media (max-width: 640px){
+    .panel-body{ grid-template-columns: 1fr; }
+  }
+
+  textarea{
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 64px;
+  }
+  textarea:focus{ background: var(--paper); border-color: var(--focus); }
+
+  /* ---------- leads list ---------- */
+
+  .leads-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+
+  .leads-head h2{ font-size: 19px; }
+
+  .lead-count{
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .empty-state{
+    border: 1px dashed var(--line);
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .lead-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--line);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .lead-card.status-novo{ border-left-color: var(--focus); }
+  .lead-card.status-contatado{ border-left-color: var(--accent); }
+  .lead-card.status-qualificado{ border-left-color: var(--sage); }
+  .lead-card.status-perdido{ border-left-color: var(--brick); opacity: 0.75; }
+
+  .lead-main .name-row{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .lead-main .name-row h3{ font-size: 16px; }
+
+  .contact-line{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .tag{
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: lowercase;
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .tag.status-novo{ background: #e6edf3; color: var(--focus); }
+  .tag.status-contatado{ background: var(--accent-soft); color: var(--accent); }
+  .tag.status-qualificado{ background: var(--sage-soft); color: var(--sage); }
+  .tag.status-perdido{ background: var(--brick-soft); color: var(--brick); }
+
+  .notes{
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-top: 8px;
+    max-width: 62ch;
+  }
+
+  .ai-block{
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    font-size: 13px;
+    max-width: 62ch;
+  }
+
+  .ai-block .score{
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .score.hi{ color: var(--sage); }
+  .score.mid{ color: var(--accent); }
+  .score.lo{ color: var(--brick); }
+
+  .lead-actions{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+    min-width: 150px;
+  }
+
+  select{
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .lead-actions .btn.small{ width: 100%; text-align: center; }
+
+  @media (max-width: 560px){
+    .lead-card{ grid-template-columns: 1fr; }
+    .lead-actions{ align-items: stretch; }
+  }
+
+  .hint{
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  .hidden{ display: none !important; }
+
+</style>
+</head>
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="center-screen">
+    <div class="auth-card">
+      <div class="wordmark"><span class="mark"></span><h1>Lead Qualifier</h1></div>
+      <p class="subtitle">Sign in to manage the sales pipeline.</p>
+
+      <div id="auth-error" class="error-msg hidden"></div>
+
+      <div class="field">
+        <label for="auth-username">Username</label>
+        <input id="auth-username" type="text" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" autocomplete="current-password">
+      </div>
+
+      <button id="auth-submit" class="btn full">Sign in</button>
+
+      <div class="switch-mode">
+        <span id="switch-copy">No account yet?</span>
+        <button id="switch-btn" type="button">Create one</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="app-shell hidden">
+    <div class="top-bar">
+      <h1>Lead Qualifier</h1>
+      <div class="who">
+        <span id="who-label"></span>
+        <button id="logout-btn">Sign out</button>
+      </div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="panel">
+      <div class="panel-head" id="new-lead-toggle">
+        <h2>New lead</h2>
+        <span id="toggle-icon">+</span>
+      </div>
+      <div class="panel-body hidden" id="new-lead-body">
+        <div class="field">
+          <label for="nl-name">Name</label>
+          <input id="nl-name" type="text">
+        </div>
+        <div class="field">
+          <label for="nl-email">Email</label>
+          <input id="nl-email" type="email">
+        </div>
+        <div class="field">
+          <label for="nl-phone">Phone</label>
+          <input id="nl-phone" type="text">
+        </div>
+        <div class="field">
+          <label for="nl-status">Status</label>
+          <select id="nl-status">
+            <option value="novo">novo</option>
+            <option value="contatado">contatado</option>
+            <option value="qualificado">qualificado</option>
+            <option value="perdido">perdido</option>
+          </select>
+        </div>
+        <div class="field full-row">
+          <label for="nl-notes">Notes</label>
+          <textarea id="nl-notes" placeholder="What did the lead say? Interest level, budget, timeline..."></textarea>
+        </div>
+        <div class="full-row">
+          <button id="nl-submit" class="btn">Add lead</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="leads-head">
+      <h2>Pipeline</h2>
+      <span class="lead-count" id="lead-count">0 leads</span>
+    </div>
+
+    <div id="leads-list"></div>
+  </div>
+
+<script>
+  const API_BASE = "https://lead-qualifier-api-1kl4.onrender.com";
+
+  let mode = "login"; // or "register"
+  let token = localStorage.getItem("lq_token") || null;
+  let username = localStorage.getItem("lq_username") || null;
+  let leads = [];
+
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- auth screen wiring ----------
+
+  $("switch-btn").addEventListener("click", () => {
+    mode = mode === "login" ? "register" : "login";
+    $("auth-submit").textContent = mode === "login" ? "Sign in" : "Create account";
+    $("switch-copy").textContent = mode === "login" ? "No account yet?" : "Already have one?";
+    $("switch-btn").textContent = mode === "login" ? "Create one" : "Sign in";
+    hideAuthError();
+  });
+
+  $("auth-submit").addEventListener("click", handleAuthSubmit);
+  [$("auth-username"), $("auth-password")].forEach(el =>
+    el.addEventListener("keydown", e => { if (e.key === "Enter") handleAuthSubmit(); })
+  );
+
+  function showAuthError(msg){
+    const box = $("auth-error");
+    box.textContent = msg;
+    box.classList.remove("hidden");
+  }
+  function hideAuthError(){ $("auth-error").classList.add("hidden"); }
+
+  async function handleAuthSubmit(){
+    const user = $("auth-username").value.trim();
+    const pass = $("auth-password").value;
+    if (!user || !pass){ showAuthError("Fill in both fields."); return; }
+
+    $("auth-submit").disabled = true;
+    hideAuthError();
+
+    try{
+      let res, data;
+      if (mode === "login"){
+        const form = new URLSearchParams();
+        form.append("username", user);
+        form.append("password", pass);
+        res = await fetch(`${API_BASE}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: form,
+        });
+      } else {
+        res = await fetch(`${API_BASE}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: user, password: pass }),
+        });
+      }
+      data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Something went wrong.");
+
+      token = data.access_token;
+      username = user;
+      localStorage.setItem("lq_token", token);
+      localStorage.setItem("lq_username", username);
+      enterDashboard();
+    } catch(err){
+      showAuthError(err.message.includes("fetch") ? "Could not reach the API. It may be waking up — try again in a few seconds." : err.message);
+    } finally {
+      $("auth-submit").disabled = false;
+    }
+  }
+
+  $("logout-btn").addEventListener("click", () => {
+    token = null; username = null;
+    localStorage.removeItem("lq_token");
+    localStorage.removeItem("lq_username");
+    $("dashboard").classList.add("hidden");
+    $("auth-screen").classList.remove("hidden");
+  });
+
+  // ---------- dashboard ----------
+
+  function enterDashboard(){
+    $("auth-screen").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    $("who-label").textContent = `Signed in as ${username}`;
+    loadLeads();
+  }
+
+  $("new-lead-toggle").addEventListener("click", () => {
+    const body = $("new-lead-body");
+    const open = !body.classList.contains("hidden");
+    body.classList.toggle("hidden");
+    $("toggle-icon").textContent = open ? "+" : "–";
+  });
+
+  $("nl-submit").addEventListener("click", async () => {
+    const payload = {
+      name: $("nl-name").value.trim(),
+      email: $("nl-email").value.trim(),
+      phone: $("nl-phone").value.trim() || null,
+      status: $("nl-status").value,
+      notes: $("nl-notes").value.trim() || null,
+    };
+    if (!payload.name || !payload.email){ alert("Name and email are required."); return; }
+
+    $("nl-submit").disabled = true;
+    try{
+      const res = await apiFetch("/leads", { method: "POST", body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error((await res.json()).detail || "Could not create lead.");
+      ["nl-name","nl-email","nl-phone","nl-notes"].forEach(id => $(id).value = "");
+      $("nl-status").value = "novo";
+      await loadLeads();
+    } catch(err){ alert(err.message); }
+    finally { $("nl-submit").disabled = false; }
+  });
+
+  async function apiFetch(path, opts = {}){
+    return fetch(`${API_BASE}${path}`, {
+      ...opts,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        ...(opts.headers || {}),
+      },
+    });
+  }
+
+  async function loadLeads(){
+    $("leads-list").innerHTML = `<div class="empty-state">Loading pipeline…</div>`;
+    try{
+      const res = await apiFetch("/leads");
+      if (res.status === 401){ return handleExpiredSession(); }
+      leads = await res.json();
+      renderStats();
+      renderLeads();
+    } catch(err){
+      $("leads-list").innerHTML = `<div class="empty-state">Could not reach the API. It may be waking up from sleep — reload in ~30 seconds.</div>`;
+    }
+  }
+
+  function handleExpiredSession(){
+    token = null;
+    localStorage.removeItem("lq_token");
+    $("dashboard").classList.add("hidden");
+    $("auth-screen").classList.remove("hidden");
+    showAuthError("Your session expired. Sign in again.");
+  }
+
+  function renderStats(){
+    const total = leads.length;
+    const qualified = leads.filter(l => l.status === "qualificado").length;
+    const scored = leads.filter(l => l.ai_score !== null && l.ai_score !== undefined);
+    const avgScore = scored.length ? (scored.reduce((s,l) => s + l.ai_score, 0) / scored.length).toFixed(1) : "—";
+    const lost = leads.filter(l => l.status === "perdido").length;
+
+    $("stats").innerHTML = `
+      <div class="stat"><div class="num">${total}</div><div class="label">Total leads</div></div>
+      <div class="stat"><div class="num">${qualified}</div><div class="label">Qualified</div></div>
+      <div class="stat"><div class="num">${avgScore}</div><div class="label">Avg. AI score</div></div>
+      <div class="stat"><div class="num">${lost}</div><div class="label">Lost</div></div>
+    `;
+    $("lead-count").textContent = `${total} lead${total === 1 ? "" : "s"}`;
+  }
+
+  function scoreClass(score){
+    if (score >= 7) return "hi";
+    if (score >= 4) return "mid";
+    return "lo";
+  }
+
+  function renderLeads(){
+    if (!leads.length){
+      $("leads-list").innerHTML = `<div class="empty-state">No leads yet. Add the first one above.</div>`;
+      return;
+    }
+
+    $("leads-list").innerHTML = leads.slice().reverse().map(lead => `
+      <div class="lead-card status-${lead.status}">
+        <div class="lead-main">
+          <div class="name-row">
+            <h3>${escapeHtml(lead.name)}</h3>
+            <span class="tag status-${lead.status}">${lead.status}</span>
+          </div>
+          <div class="contact-line">${escapeHtml(lead.email)}${lead.phone ? " · " + escapeHtml(lead.phone) : ""}</div>
+          ${lead.notes ? `<div class="notes">${escapeHtml(lead.notes)}</div>` : ""}
+          ${lead.ai_score != null ? `
+            <div class="ai-block">
+              <span class="score ${scoreClass(lead.ai_score)}">${lead.ai_score}/10</span>${escapeHtml(lead.ai_summary || "")}
+            </div>` : ""
+          }
+        </div>
+        <div class="lead-actions">
+          <select data-id="${lead.id}" class="status-select">
+            ${["novo","contatado","qualificado","perdido"].map(s =>
+              `<option value="${s}" ${s === lead.status ? "selected" : ""}>${s}</option>`
+            ).join("")}
+          </select>
+          <button class="btn small qualify-btn" data-id="${lead.id}" ${!lead.notes ? "disabled" : ""}>
+            ${lead.ai_score != null ? "Re-qualify" : "Qualify with AI"}
+          </button>
+        </div>
+      </div>
+    `).join("");
+
+    document.querySelectorAll(".status-select").forEach(sel => {
+      sel.addEventListener("change", () => updateStatus(sel.dataset.id, sel.value));
+    });
+    document.querySelectorAll(".qualify-btn").forEach(btn => {
+      btn.addEventListener("click", () => qualifyLead(btn.dataset.id, btn));
+    });
+  }
+
+  async function updateStatus(id, status){
+    try{
+      const res = await apiFetch(`/leads/${id}?status=${encodeURIComponent(status)}`, { method: "PATCH" });
+      if (!res.ok) throw new Error("Could not update status.");
+      await loadLeads();
+    } catch(err){ alert(err.message); }
+  }
+
+  async function qualifyLead(id, btn){
+    btn.disabled = true;
+    btn.textContent = "Thinking…";
+    try{
+      const res = await apiFetch(`/leads/${id}/qualify`, { method: "POST" });
+      if (!res.ok) throw new Error((await res.json()).detail || "Could not qualify lead.");
+      await loadLeads();
+    } catch(err){
+      alert(err.message);
+      btn.disabled = false;
+      btn.textContent = "Qualify with AI";
+    }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- boot ----------
+  if (token && username){ enterDashboard(); }
+</script>
+</body>
+</html>
