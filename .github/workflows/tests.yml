@@ -19,4 +19,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost/testdb"
+          SECRET_KEY: "chave-de-teste-para-ci"
+          GEMINI_API_KEY: "chave-fake-para-ci"
         run: pytest
